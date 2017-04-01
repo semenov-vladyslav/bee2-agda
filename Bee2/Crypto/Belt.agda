@@ -6,9 +6,11 @@ open import Data.Nat using (ℕ)
 open import Data.Product using (_,_)
 open import Agda.Builtin.TrustMe using (primTrustMe)
 
+{-# FOREIGN GHC import qualified Bee2.Defs    #-}
+{-# FOREIGN GHC import qualified Data.ByteString    #-}
 postulate
   SizeT : Set
-{-# COMPILED_TYPE SizeT (Int) #-}
+{-# COMPILE GHC SizeT = type (Bee2.Defs.Size) #-}
 
 Password = ByteString Strict
 Salt = ByteString Strict
@@ -17,14 +19,14 @@ Key = ByteVec {Strict} 16 -- >= 16
 Header = ByteVec {Strict} 16
 Kek = ByteVec {Strict} 32
 
-{-# IMPORT Bee2.Crypto.Belt    #-}
+{-# FOREIGN GHC import qualified Bee2.Crypto.Belt    #-}
 postulate
   beltPBKDF′ : ByteString Strict → SizeT → ByteString Strict → ByteString Strict
   fromℕ : ℕ → SizeT
 
-{-# COMPILED beltPBKDF′ 
+{-# COMPILE GHC beltPBKDF′ =
     ( Bee2.Crypto.Belt.beltPBKDF'bs ) #-}
-{-# COMPILED fromℕ 
+{-# COMPILE GHC fromℕ =
     ( Prelude.fromIntegral ) #-}
 
 beltPBKDF : Password → ℕ → Salt → Kek
