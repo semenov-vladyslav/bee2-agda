@@ -23,11 +23,14 @@ Kek = ByteVec {Strict} 32
 postulate
   beltPBKDF′ : ByteString Strict → SizeT → ByteString Strict → ByteString Strict
   fromℕ : ℕ → SizeT
+  beltHash : ByteString Strict → ByteString Strict
 
 {-# COMPILE GHC beltPBKDF′ =
     ( Bee2.Crypto.Belt.beltPBKDF'bs ) #-}
 {-# COMPILE GHC fromℕ =
     ( Prelude.fromIntegral ) #-}
+{-# COMPILE GHC beltHash =
+    ( Bee2.Crypto.Belt.beltHash'bs ) #-}
 
 beltPBKDF : Password → ℕ → Salt → Kek
 beltPBKDF p n s = (beltPBKDF′ p (fromℕ n) s) , primTrustMe
