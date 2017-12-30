@@ -6,7 +6,9 @@ open import Data.Nat using (ℕ)
 open import Data.Product using (_,_)
 open import Agda.Builtin.TrustMe using (primTrustMe)
 
-open import Bee2.Crypto.Defs
+import Bee2.Crypto.Defs
+open Bee2.Crypto.Defs
+open Bee2.Crypto.Defs using (Hash) public
 
 {-# FOREIGN GHC import qualified Bee2.Crypto.Belt    #-}
 {-# FOREIGN GHC import qualified Data.ByteString    #-}
