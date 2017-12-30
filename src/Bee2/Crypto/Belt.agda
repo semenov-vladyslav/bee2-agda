@@ -6,31 +6,29 @@ open import Data.Nat using (ℕ)
 open import Data.Product using (_,_)
 open import Agda.Builtin.TrustMe using (primTrustMe)
 
-{-# FOREIGN GHC import qualified Bee2.Defs    #-}
+open import Bee2.Crypto.Defs
+
+{-# FOREIGN GHC import qualified Bee2.Crypto.Belt    #-}
 {-# FOREIGN GHC import qualified Data.ByteString    #-}
-postulate
-  SizeT : Set
-{-# COMPILE GHC SizeT = type (Bee2.Defs.Size) #-}
 
 Password = ByteString Strict
 Salt = ByteString Strict
-Key = ByteVec {Strict} 16 -- >= 16
--- type EKey = ByteString -- sizeof key + 16
+Key = ByteVec {Strict} 32
 Header = ByteVec {Strict} 16
 Kek = ByteVec {Strict} 32
 
 {-# FOREIGN GHC import qualified Bee2.Crypto.Belt    #-}
 postulate
-  beltPBKDF′ : ByteString Strict → SizeT → ByteString Strict → ByteString Strict
-  fromℕ : ℕ → SizeT
-  beltHash : ByteString Strict → ByteString Strict
+  primBeltPBKDF : ByteString Strict → SizeT → ByteString Strict → ByteString Strict
+  primBeltHash : ByteString Strict → ByteString Strict
 
-{-# COMPILE GHC beltPBKDF′ =
+{-# COMPILE GHC primBeltPBKDF =
     ( Bee2.Crypto.Belt.beltPBKDF'bs ) #-}
-{-# COMPILE GHC fromℕ =
-    ( Prelude.fromIntegral ) #-}
-{-# COMPILE GHC beltHash =
+{-# COMPILE GHC primBeltHash =
     ( Bee2.Crypto.Belt.beltHash'bs ) #-}
 
 beltPBKDF : Password → ℕ → Salt → Kek
-beltPBKDF p n s = (beltPBKDF′ p (fromℕ n) s) , primTrustMe
+beltPBKDF p n s = (primBeltPBKDF p (SizeFromℕ n) s) , primTrustMe
+
+beltHash : ByteString Strict → Hash
+beltHash bs = primBeltHash bs , primTrustMe
